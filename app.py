@@ -344,29 +344,6 @@ def template_design():
                            data_columns=data_columns,
                            current_template_rows=current_template_rows)
 
-# --- bPac Rotası ---
-@app.route('/bpac_label', methods=['GET'])
-@login_required
-def bpac_label():
-    """Brother b-PAC Etiket Yazdırma Sayfası"""
-    # print_uuid kontrolü: yazdırılacak veri var mı
-    if 'print_uuid' not in session:
-        flash('Yazdırılacak veri bulunamadı. Lütfen önce tablo üzerinden satır seçin.', 'warning')
-        return redirect(url_for('table_view'))
-
-    print_uuid = session['print_uuid']
-    parquet_path = os.path.join(app.config['UPLOAD_FOLDER'], f'{print_uuid}_print.parquet')
-    
-    if not os.path.exists(parquet_path):
-        flash('Yazdırılacak veri dosyası bulunamadı.', 'danger')
-        return redirect(url_for('table_view'))
-    
-    df = pd.read_parquet(parquet_path)
-    columns = df.columns.tolist()
-    data_json = df.to_json(orient='records', force_ascii=False)
-    
-    return render_template('bpac_label.html', columns=columns, data_json=data_json)
-
 
 @app.route('/print_preview')
 @login_required
@@ -486,5 +463,4 @@ def print_preview():
 #    if __name__ == '__main__':
 #
 #       app.run(debug=True)
-
 
